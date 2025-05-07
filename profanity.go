@@ -11,32 +11,34 @@ type Output struct {
 	Probabilities []float64 `json:"probabilities"`
 }
 
-func Predict(text string) (int, error) {
-	cmd := exec.Command("./predict", text)
+func Predict(texts ...string) ([]int, error) {
+	cmd := exec.Command("./predict", texts...)
+
 	out, err := cmd.Output()
 	if err != nil {
-		return 0, fmt.Errorf("predict error: %w", err)
+		return nil, fmt.Errorf("predict error: %w", err)
 	}
 
 	var result Output
 	if err := json.Unmarshal(out, &result); err != nil {
-		return 0, fmt.Errorf("json parse error: %w", err)
+		return nil, fmt.Errorf("json parse error: %w", err)
 	}
 
-	return result.Predictions[0], nil
+	return result.Predictions, nil
 }
 
-func PredictProb(text string) (float64, error) {
-	cmd := exec.Command("./predict", text)
+func PredictProb(texts ...string) ([]float64, error) {
+	cmd := exec.Command("./predict", texts...)
+
 	out, err := cmd.Output()
 	if err != nil {
-		return 0, fmt.Errorf("predict_prob error: %w", err)
+		return nil, fmt.Errorf("predict_prob error: %w", err)
 	}
 
 	var result Output
 	if err := json.Unmarshal(out, &result); err != nil {
-		return 0, fmt.Errorf("json parse error: %w", err)
+		return nil, fmt.Errorf("json parse error: %w", err)
 	}
 
-	return result.Probabilities[0], nil
+	return result.Probabilities, nil
 }
